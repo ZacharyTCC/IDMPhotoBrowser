@@ -64,6 +64,9 @@
 // Animation time (default .28)
 @property (nonatomic) float animationDuration;
 
+// Paging
+@property (nonatomic, readonly) NSUInteger currentPageIndex;
+
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray;
 

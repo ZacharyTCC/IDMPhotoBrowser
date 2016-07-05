@@ -31,7 +31,6 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 	// Paging
     NSMutableSet *_visiblePages, *_recycledPages;
     NSUInteger _pageIndexBeforeRotation;
-    NSUInteger _currentPageIndex;
 
     // Buttons
     UIButton *_doneButton;
