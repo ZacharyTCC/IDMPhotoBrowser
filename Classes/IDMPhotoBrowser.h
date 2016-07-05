@@ -85,4 +85,7 @@
 // Get IDMPhoto at index
 - (id<IDMPhoto>)photoAtIndex:(NSUInteger)index;
 
+// Dismiss
+- (void)dismiss;
+
 @end

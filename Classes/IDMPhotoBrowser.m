@@ -301,6 +301,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     self.view.opaque = YES;
 
     self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:newAlpha];
+    scrollView.photoImageView.alpha = newAlpha;
 
     // Gesture Ended
     if ([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateEnded) {
@@ -328,6 +329,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
             [UIView setAnimationDelegate:self];
             [scrollView setCenter:CGPointMake(finalX, finalY)];
             self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
+            scrollView.photoImageView.alpha = 0;
             [UIView commitAnimations];
 
             [self performSelector:@selector(doneButtonPressed:) withObject:self afterDelay:animationDuration];
@@ -338,6 +340,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
             [self setNeedsStatusBarAppearanceUpdate];
 
             self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:1];
+            scrollView.photoImageView.alpha = 1;
 
             CGFloat velocityY = (.35*[(UIPanGestureRecognizer*)sender velocityInView:self.view].y);
 
@@ -887,6 +890,22 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     return captionView;
 }
 
+- (void)dismiss {
+    if ([_delegate respondsToSelector:@selector(willDisappearPhotoBrowser:)]) {
+        [_delegate willDisappearPhotoBrowser:self];
+    }
+    
+    if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
+        IDMZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
+        [self performCloseAnimationWithScrollView:scrollView];
+    }
+    else {
+        _senderViewForAnimation.hidden = NO;
+        [self prepareForClosePhotoBrowser];
+        [self dismissPhotoBrowserAnimated:YES];
+    }
+}
+
 - (UIImage *)imageForPhoto:(id<IDMPhoto>)photo {
 	if (photo) {
 		// Get image or obtain in background
@@ -1268,19 +1287,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 - (void)doneButtonPressed:(id)sender {
 
-    if ([_delegate respondsToSelector:@selector(willDisappearPhotoBrowser:)]) {
-        [_delegate willDisappearPhotoBrowser:self];
-    }
-
-    if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
-        IDMZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
-        [self performCloseAnimationWithScrollView:scrollView];
-    }
-    else {
-        _senderViewForAnimation.hidden = NO;
-        [self prepareForClosePhotoBrowser];
-        [self dismissPhotoBrowserAnimated:YES];
-    }
+    [self dismiss];
 }
 
 - (void)actionButtonPressed:(id)sender {
